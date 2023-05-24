@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+  db:
+    container_name: bewise2_postgresql
+    image: postgres:15.3-alpine
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${DB_NAME} -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  flask:
+    container_name: bewise2_app
+    build:
+      context: .
+      args:
+        FLASK_ENV: ${FLASK_ENV}
+    expose:
+      - 5000
+    env_file:
+      - ./.env
+    restart: always
+    volumes:
+      - static_volume:/usr/src/app/static_nginx
+    depends_on:
+      db:
+        condition: service_healthy
+  nginx:
+    container_name: bewise2_nginx
+    image: nginx:latest
+    restart: unless-stopped
+    depends_on:
+      - flask
+    volumes:
+      - ./nginx/nginx-app.conf:/etc/nginx/nginx-app.conf:ro
+      - static_volume:/usr/src/app/static
+      - media_volume:/usr/src/app/media
+    ports:
+      - 80:80
+volumes:
+  static_volume:
+  media_volume:

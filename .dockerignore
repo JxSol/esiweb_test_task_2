@@ -1,0 +1,37 @@
+# Docker files
+Dockerfile
+Dockerfile.archive
+docker-compose.yml
+.dockerignore
+
+# IDE files
+.idea
+.vscode
+
+# Git files
+**/.git
+**/.github
+**/.gitignore
+**/.gitlab-ci.yml
+**/.gitmodules
+
+# Temp files
+**/.cache
+**/.pyc
+**/.pyo
+**/.pyd
+__pycache__
+.Python
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Other files
+**/README.md
+**/db.sqlite3
